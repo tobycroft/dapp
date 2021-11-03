@@ -218,6 +218,7 @@
             if (res.code == 0) {
               Pub.msg(_this.lang.Login_succeeded);
               var data = res.data;
+              console.log(data)
               Pub.setSession('token', data.token);
               Pub.setSession('uid', data.uid);
               setTimeout(function () {
