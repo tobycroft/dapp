@@ -43,8 +43,8 @@
               class="bd-white border-radius-10 align-center pdl-30 pdr-30 w-100 h-92px mgt-30 font-30">
           </div>
           <div class="w-100 mgt-20 mgb-30">
-            <div class="btn-gradual-lg full mgt-30" @click="login(1)">{{lang.Sign_in}} - TRC</div>
-            <div class="btn-gradual-lg full mgt-30" @click="login(2)">{{lang.Sign_in}} - ERC</div>
+            <div class="btn-gradual-lg full mgt-30" @click="login(trx)">{{lang.Sign_in}} - TRC</div>
+            <div class="btn-gradual-lg full mgt-30" @click="login(eth)">{{lang.Sign_in}} - ERC</div>
           </div>
         </div>
       </div>
@@ -174,7 +174,7 @@
           var _this = this;
           this.loginType = type;
           if (!this.password) return Pub.msg(this.lang.Please_input_a_password);
-          if (type == 1) {
+          if (type == "trx") {
             if (!this.trxInfo.fromAddress) {
               var load = $(document).dialog({
                 type: 'toast',
