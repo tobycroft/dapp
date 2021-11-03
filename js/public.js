@@ -20,7 +20,7 @@
          */
         post: function (url, data, callback, syn, type) {
             if (url.indexOf('http') === -1) {
-                return this._jqAjax(this.apiHost + url, data, callback, syn, 'post');
+                return this._jqAjax(this.apiHost + url, data, callback, syn, 'post');Api_find_address
             } else {
                 return this._jqAjax(url, data, callback, syn, 'post');
             }
