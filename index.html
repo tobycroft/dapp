@@ -342,8 +342,7 @@
             _this.noticeList = data.notice;
             _this.dayConfig = data.config;
             _this.zyTotalBalance = data.zy_total_balance;
-            _this.trxInfo.toAddress = data.toAddr.trx_address;
-            _this.ethInfo.toAddress = data.toAddr.eth_address;
+
             _this.profitData = data.profit;
             _this.todayProfit = data.today_profit;
             _this.withdrawConfig = data.out_config;
@@ -360,9 +359,10 @@
             var data = res.data;
             _this.inviteUrl = data;
           });
-          Pub.post('v1/user/invite/get', {}, function (res) {
+          Pub.post('v1/invest/address/get', {}, function (res) {
             var data = res.data;
-            _this.inviteUrl = data;
+            _this.trxInfo.toAddress = data.trx_address;
+            _this.ethInfo.toAddress = data.eth_address;
           });
         },
         dayConfigEvent() {
