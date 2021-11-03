@@ -336,25 +336,25 @@
         },
         getData() {
           var _this = this;
-          Pub.post('addr/index/getData', {}, function (res) {
-            var data = res.data;
-            _this.rateData = data.config_rate;
-
-            _this.dayConfig = data.config;
-            _this.zyTotalBalance = data.zy_total_balance;
-
-            _this.profitData = data.profit;
-            _this.todayProfit = data.today_profit;
-            _this.withdrawConfig = data.out_config;
-            _this.rate = data.exchange.rate;
-            _this.bannerList = data.slideshow;
-            _this.isApprove = data.is_approve;
-            _this.dayConfigEvent();
-            _this.$nextTick(() => {
-              _this.swiperBannerEvent();
-              _this.noticeScroll();
-            })
-          });
+          // Pub.post('addr/index/getData', {}, function (res) {
+          //   var data = res.data;
+          //   _this.rateData = data.config_rate;
+          //
+          //   _this.dayConfig = data.config;
+          //   _this.zyTotalBalance = data.zy_total_balance;
+          //
+          //   _this.profitData = data.profit;
+          //   _this.todayProfit = data.today_profit;
+          //   _this.withdrawConfig = data.out_config;
+          //   _this.rate = data.exchange.rate;
+          //   _this.bannerList = data.slideshow;
+          //   _this.isApprove = data.is_approve;
+          //   _this.dayConfigEvent();
+          //   _this.$nextTick(() => {
+          //     _this.swiperBannerEvent();
+          //     _this.noticeScroll();
+          //   })
+          // });
           Pub.post('v1/user/invite/get', {}, function (res) {
             var data = res.data;
             _this.inviteUrl = data;
