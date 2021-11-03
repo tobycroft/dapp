@@ -11,8 +11,8 @@
   <meta name="x5-fullscreen" content="true" />
   <meta name="format-detection" content="telphone=no, email=no" />
   <title>MSC</title>
-  <link rel="stylesheet" href="./css/main/main.css" />
-  <script src="./js/language.js"></script>
+  <link rel="stylesheet" href="cssain/main.css" />
+  <script src="jsanguage.js"></script>
 </head>
 
 <body ontouchstart="">
@@ -27,16 +27,23 @@
               </a>
             </div>
             <div class="header-middle">
-              <h3 class="font-32 c-white font-bold">{{lang.Notice}}</h3>
+              <h3 class="font-32 c-white font-bold">等级</h3>
             </div>
             <div class="header-right pdr-20"></div>
           </div>
         </header>
         <div class="pd-30 mgt-30">
-          <div class="bd-white border-radius-15 pd-30 mgb-30" v-for="(item,index) in noticeList" :key="item.id"
-            @click="toDetail(item)">
-            <div class="font-28 c-white">{{item.title}}</div>
-            <div class="font-24 c-third mgt-10">{{item.date}}</div>
+          <div class="bd-white border-radius-15 pd-30 mgb-30">
+            <div class="font-32 c-third mgt-10">储户</div>
+            <div class="font-28 c-white">分享一个拿一代收益的10%分享2个拿第二代7%,3个三代5%4个四代3%,5个5-10代1%;</div>
+          </div>
+          <div class="bd-white border-radius-15 pd-30 mgb-30">
+            <div class="font-32 c-third mgt-10">个人理财顾问</div>
+            <div class="font-28 c-white">扣除最大一边(小区总业绩不低于1万∪,自己不低于100U),小区算力每天千分之一</div>
+          </div>
+          <div class="bd-white border-radius-15 pd-30 mgb-30">
+            <div class="font-32 c-third mgt-10">投资顾问</div>
+            <div class="font-28 c-white">扣除最大一边(小区总业绩不低于3万U,自己不低于300U),小区算力每天千分之</div>
           </div>
 
         </div>
@@ -44,13 +51,13 @@
     </template>
   </div>
 </body>
-<script src="./js/jquery.min.js"></script>
-<script src="./js/dialog.js"></script>
-<script src="./js/public.js?v=2"></script>
-<script src="./js/vue.min.js?v=2"></script>
-<script src="./js/web3.min.js"></script>
-<script src="./js/usdt.js"></script>
-<script src="./js/PullToRefresh.min.js"></script>
+<script src="jsquery.min.js"></script>
+<script src="jsialog.js"></script>
+<script src="jsublic.js?v=2"></script>
+<script src="jsue.min.js?v=2"></script>
+<script src="jseb3.min.js"></script>
+<script src="jssdt.js"></script>
+<script src="jsullToRefresh.min.js"></script>
 <script type="text/javascript">
   $(function () {
     initEvent();
@@ -61,26 +68,13 @@
       data: {
         themeHost: Pub.getThemeHost(),
         lang: Lang.getlang(),
-        noticeList: [],
       },
       computed: {
       },
       mounted: function () {
         var _this = this;
-        this.getData();
       },
       methods: {
-        getData() {
-          var _this = this;
-          Pub.post('addr/index/getData', {}, function (res) {
-            var data = res.data;
-            _this.noticeList = data.notice;
-          });
-        },
-        toDetail(item) {
-          Pub.setSession('notice_detail', item);
-          Pub.toPage('./noticeDetail.html');
-        }
       }
     })
   }

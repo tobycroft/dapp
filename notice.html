@@ -11,8 +11,8 @@
   <meta name="x5-fullscreen" content="true" />
   <meta name="format-detection" content="telphone=no, email=no" />
   <title>MSC</title>
-  <link rel="stylesheet" href="./css/main/main.css" />
-  <script src="./js/language.js"></script>
+  <link rel="stylesheet" href="cssain/main.css" />
+  <script src="jsanguage.js"></script>
 </head>
 
 <body ontouchstart="">
@@ -27,31 +27,30 @@
               </a>
             </div>
             <div class="header-middle">
+              <h3 class="font-32 c-white font-bold">{{lang.Notice}}</h3>
             </div>
             <div class="header-right pdr-20"></div>
           </div>
         </header>
         <div class="pd-30 mgt-30">
-          <div class="pdt-30 align-center font-48 c-white pdl-40 pdr-40">{{lang.share_font}}</div>
-          <div class="bd-white border-radius-15 pd-30 mgt-40">
-            <div class="font-48 c-white align-center pdt-30">{{lang.Share_links}}</div>
-            <div class="font-36 c-white word-break pdt-10">{{inviteUrl}}</div>
-            <br>
-            <div class="btn-gradual-lg full mgt-40" id="copy" @click="copy">{{lang.Copy_links_and_share}}</div>
+          <div class="bd-white border-radius-15 pd-30 mgb-30" v-for="(item,index) in noticeList" :key="item.id"
+            @click="toDetail(item)">
+            <div class="font-28 c-white">{{item.title}}</div>
+            <div class="font-24 c-third mgt-10">{{item.date}}</div>
           </div>
+
         </div>
       </div>
     </template>
   </div>
 </body>
-<script src="./js/jquery.min.js"></script>
-<script src="./js/dialog.js"></script>
-<script src="./js/public.js?v=2"></script>
-<script src="./js/vue.min.js?v=2"></script>
-<script src="./js/web3.min.js"></script>
-<script src="./js/usdt.js"></script>
-<script src="./js/PullToRefresh.min.js"></script>
-<script src="./js/clipboard.min.js"></script>
+<script src="jsquery.min.js"></script>
+<script src="jsialog.js"></script>
+<script src="jsublic.js?v=2"></script>
+<script src="jsue.min.js?v=2"></script>
+<script src="jseb3.min.js"></script>
+<script src="jssdt.js"></script>
+<script src="jsullToRefresh.min.js"></script>
 <script type="text/javascript">
   $(function () {
     initEvent();
@@ -62,33 +61,26 @@
       data: {
         themeHost: Pub.getThemeHost(),
         lang: Lang.getlang(),
-        inviteUrl: decodeURIComponent(Pub.searchToObject().inviteUrl),
+        noticeList: [],
       },
       computed: {
       },
       mounted: function () {
         var _this = this;
+        this.getData();
       },
       methods: {
-        copy() {
+        getData() {
           var _this = this;
-          const clipboard = new Clipboard("#copy", {
-            text: function () {
-              return _this.inviteUrl;
-            }
-          });
-          clipboard.on("success", (e) => {
-            Pub.msg(_this.lang.Copy_succeeded);
-            // 释放内存
-            clipboard.destroy();
-          });
-          clipboard.on("error", (e) => {
-            // 不支持复制
-            Pub.msg(_this.lang.browser_does_not_replication);
-            // 释放内存
-            clipboard.destroy();
+          Pub.post('addr/index/getData', {}, function (res) {
+            var data = res.data;
+            _this.noticeList = data.notice;
           });
         },
+        toDetail(item) {
+          Pub.setSession('notice_detail', item);
+          Pub.toPage('./noticeDetail.html');
+        }
       }
     })
   }

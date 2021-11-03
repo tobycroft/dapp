@@ -11,8 +11,8 @@
   <meta name="x5-fullscreen" content="true" />
   <meta name="format-detection" content="telphone=no, email=no" />
   <title>MSC</title>
-  <link rel="stylesheet" href="./css/main/main.css" />
-  <script src="./js/language.js"></script>
+  <link rel="stylesheet" href="cssain/main.css" />
+  <script src="jsanguage.js"></script>
 </head>
 
 <body ontouchstart="">
@@ -27,35 +27,30 @@
               </a>
             </div>
             <div class="header-middle">
-              <h3 class="font-32 c-white font-bold">{{name}}</h3>
+              <h3 class="font-32 c-white font-bold">{{lang.Announcement_details}}</h3>
             </div>
             <div class="header-right pdr-20"></div>
           </div>
         </header>
         <div class="pd-30 mgt-30">
-          <div class="bd-white border-radius-15 mgb-30 pd-30 flex flex-align-center flex-between">
-            <div class="font-28 c-white flex-auto">{{lang.Pledge_interest}}: {{data.profit || 0}}USDT</div>
+          <div class="bd-white border-radius-15 pd-30 mgb-30">
+            <div class="font-28 c-white align-center">{{detail.title}}</div>
+            <div class="font-24 c-third mgt-10 align-center">{{detail.date}}</div>
+            <div class="html-cont font-24 c-gray mgt-20" v-html="detail.content"></div>
           </div>
-          <div class="bd-white border-radius-15 mgb-30 pd-30 flex flex-align-center flex-between">
-            <div class="font-28 c-white flex-auto">{{lang.Share_rewards}}: {{data.invite_profit || 0}}USDT</div>
-          </div>
-          <div class="bd-white border-radius-15 mgb-30 pd-30 flex flex-align-center flex-between">
-            <div class="font-28 c-white flex-auto">{{lang.Bonus}}: {{data.team_profit || 0}}USDT</div>
-          </div>
-
 
         </div>
       </div>
     </template>
   </div>
 </body>
-<script src="./js/jquery.min.js"></script>
-<script src="./js/dialog.js"></script>
-<script src="./js/public.js?v=2"></script>
-<script src="./js/vue.min.js?v=2"></script>
-<script src="./js/web3.min.js"></script>
-<script src="./js/usdt.js"></script>
-<script src="./js/PullToRefresh.min.js"></script>
+<script src="jsquery.min.js"></script>
+<script src="jsialog.js"></script>
+<script src="jsublic.js?v=2"></script>
+<script src="jsue.min.js?v=2"></script>
+<script src="jseb3.min.js"></script>
+<script src="jssdt.js"></script>
+<script src="jsullToRefresh.min.js"></script>
 <script type="text/javascript">
   $(function () {
     initEvent();
@@ -66,8 +61,7 @@
       data: {
         themeHost: Pub.getThemeHost(),
         lang: Lang.getlang(),
-        name: Pub.searchToObject().name,
-        data: Pub.searchToObject().data,
+        detail: Pub.getSession('notice_detail') || {},
       },
       computed: {
       },
