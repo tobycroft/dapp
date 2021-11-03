@@ -4,8 +4,8 @@
 (function (window) {
     var public = {
         isDebug: false,
-        apiHost: 'http://msc.tuuz.cc:81/', //服务器接口域名-测试
-        imgHost: 'http://msc.tuuz.cc:81/',
+        apiHost: 'http://msc.tuuz.cc:15188/', //服务器接口域名-测试
+        imgHost: 'http://msc.tuuz.cc:15188/',
         token: '',
         /**
          * 对jquery的post进一步封装，默认会注入_app\_platform\_passport,
