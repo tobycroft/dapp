@@ -1,0 +1,14 @@
+@charset "UTF-8";
+@import "theme.less";
+
+.theme-default{
+    .theme();
+    @imgUrl: '../../images/theme_default';
+    input{
+        color: #fff!important;
+    }
+    .com-bg{
+        background: url("@{imgUrl}/bg_login.png") no-repeat 50% 50%;
+        background-size: cover;
+    }
+}

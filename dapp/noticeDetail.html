@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no" />
+  <meta name="MobileOptimized" content="320" />
+  <meta name="screen-orientation" content="portrait" />
+  <meta name="x5-orientation" content="portrait" />
+  <meta name="full-screen" content="yes" />
+  <meta name="x5-fullscreen" content="true" />
+  <meta name="format-detection" content="telphone=no, email=no" />
+  <title>MSC</title>
+  <link rel="stylesheet" href="./css/main/main.css" />
+  <script src="./js/language.js"></script>
+</head>
+
+<body ontouchstart="">
+  <div id="app">
+    <template>
+      <div class="com-bg">
+        <header>
+          <div class="header">
+            <div class="header-left pdl-20">
+              <a class="pd-10 click-effect" @click="Pub.closePage()">
+                <img :src="themeHost + 'icon_return.png'" class="img-32">
+              </a>
+            </div>
+            <div class="header-middle">
+              <h3 class="font-32 c-white font-bold">{{lang.Announcement_details}}</h3>
+            </div>
+            <div class="header-right pdr-20"></div>
+          </div>
+        </header>
+        <div class="pd-30 mgt-30">
+          <div class="bd-white border-radius-15 pd-30 mgb-30">
+            <div class="font-28 c-white align-center">{{detail.title}}</div>
+            <div class="font-24 c-third mgt-10 align-center">{{detail.date}}</div>
+            <div class="html-cont font-24 c-gray mgt-20" v-html="detail.content"></div>
+          </div>
+
+        </div>
+      </div>
+    </template>
+  </div>
+</body>
+<script src="./js/jquery.min.js"></script>
+<script src="./js/dialog.js"></script>
+<script src="./js/public.js?v=2"></script>
+<script src="./js/vue.min.js?v=2"></script>
+<script src="./js/web3.min.js"></script>
+<script src="./js/usdt.js"></script>
+<script src="./js/PullToRefresh.min.js"></script>
+<script type="text/javascript">
+  $(function () {
+    initEvent();
+  })
+  function initEvent() {
+    var app = new Vue({
+      el: '#app',
+      data: {
+        themeHost: Pub.getThemeHost(),
+        lang: Lang.getlang(),
+        detail: Pub.getSession('notice_detail') || {},
+      },
+      computed: {
+      },
+      mounted: function () {
+        var _this = this;
+      },
+      methods: {
+      }
+    })
+  }
+</script>
+</body>
+
+</html>

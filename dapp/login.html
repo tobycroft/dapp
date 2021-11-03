@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no" />
+  <meta name="MobileOptimized" content="320" />
+  <meta name="screen-orientation" content="portrait" />
+  <meta name="x5-orientation" content="portrait" />
+  <meta name="full-screen" content="yes" />
+  <meta name="x5-fullscreen" content="true" />
+  <meta name="format-detection" content="telphone=no, email=no" />
+  <title>MSC</title>
+  <link rel="stylesheet" href="./css/main/main.css" />
+  <script src="./js/language.js?v=1"></script>
+</head>
+
+<body ontouchstart="">
+  <div id="app">
+    <template>
+      <div class="com-bg">
+        <div class="position-absolute w-100 flex flex-align-center" style="height: 0.2rem;">
+          <div class="flex-1 pdl-30">
+
+          </div>
+          <div class="flex-1 align-center">
+          </div>
+          <div class="flex-1 pdr-30 align-right position-relative">
+            <span class="font-32 c-white">{{lang.lang_name}}</span><i class="icon-tri-down mgl-20"></i>
+            <select class="position-absolute z-index-3 w-100 h-100 hidden" v-model="langType" @change="langChange">
+              <option v-for="(item,index) in langList" :key="item.type" :value="item.type">{{item.name}}</option>
+            </select>
+          </div>
+        </div>
+        <div class="h-100vh flex flex-align-center flex-justify-center pdl-50 pdr-50 pdb-50 flex-column">
+          <div class="w-100 align-center">
+            <img :src="themeHost+'logo.png'" style="height: 0.3rem;">
+          </div>
+          <div class="w-100 mgt-30 pdt-30">
+            <input type="password" :placeholder="lang.Please_input_a_password" v-model="password"
+              class="bd-white border-radius-10 align-center pdl-30 pdr-30 w-100 h-92px font-32">
+            <input type="text" v-model="inviteCode"
+              class="bd-white border-radius-10 align-center pdl-30 pdr-30 w-100 h-92px mgt-30 font-30">
+          </div>
+          <div class="w-100 mgt-20 mgb-30">
+            <div class="btn-gradual-lg full mgt-30" @click="login(1)">{{lang.Sign_in}} - TRC</div>
+            <div class="btn-gradual-lg full mgt-30" @click="login(2)">{{lang.Sign_in}} - ERC</div>
+          </div>
+        </div>
+      </div>
+    </template>
+  </div>
+</body>
+<script src="./js/jquery.min.js"></script>
+<script src="./js/dialog.js"></script>
+<script src="./js/public.js?v=1"></script>
+<script src="./js/vue.min.js?v=2"></script>
+<script src="./js/web3.min.js"></script>
+<script src="./js/usdt.js"></script>
+<script src="./js/PullToRefresh.min.js"></script>
+<script type="text/javascript">
+  $(function () {
+    initEvent();
+  })
+  function initEvent() {
+    var app = new Vue({
+      el: '#app',
+      data: {
+        themeHost: Pub.getThemeHost(),
+        lang: Lang.getlang(),
+        langList: Lang.langList(),
+        langType: Pub.getSession('language') || 'en',
+        inviteCode: Pub.searchToObject().code,
+        password: '',
+        trxInfo: {
+          usdtcc: null,
+          toAddress: '',
+          link: 0,
+          fromAddress: '',
+          address: '',
+        },
+        bscInfo: {
+          usdtcc: null,
+          toAddress: '',
+          link: 0,
+          fromAddress: '',
+          address: '',
+        },
+        ethInfo: {
+          usdtcc: null,
+          toAddress: '',
+          link: 0,
+          fromAddress: '',
+          address: '',
+        },
+        usdtcontractAddrBsc: '0xe9e7cea3dedca5984780bafc599bd69add087d56',
+        usdtcontractAddrEth: '0xdAC17F958D2ee523a2206206994597C13D831ec7',
+        type: 0,
+        loginType: 1,
+      },
+      computed: {
+      },
+      mounted: function () {
+        var _this = this;
+        this.checkCode();
+        this.trxInit();
+        this.ethInit();
+      },
+      methods: {
+        checkCode() {
+          if (!this.inviteCode || this.inviteCode == 'undefiend') return Pub.msg(this.lang.Wrong_superior_address);
+          Pub.setSession('invite_code', this.inviteCode);
+        },
+        langChange() {
+          Pub.setSession('language', this.langType);
+          setTimeout(() => {
+            this.lang = Lang.getlang();
+          }, 10);
+        },
+        async trxInit(isTips, callback) {
+          var _this = this;
+          if (typeof window.tronWeb !== 'undefined') {
+            if (typeof window.tronWeb.defaultAddress.base58 !== 'undefined') {
+              _this.trxInfo.fromAddress = window.tronWeb.defaultAddress.base58;
+              _this.trxInfo.usdtcc = await tronWeb.contract().at("TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t");
+              if (_this.trxInfo.fromAddress != false) {
+                _this.type = 1;
+                _this.trxInfo.link = 1;
+              }
+              if (callback && typeof callback == 'function') {
+                callback();
+              }
+            }
+          }
+          else {
+            if (isTips) {
+              Pub.msg(this.lang.not_trx_wallet);
+            }
+          }
+        },
+        async ethInit(isTips, callback) {
+          var _this = this;
+          if (typeof web3 !== 'undefined') {
+            var accounts = await ethereum.enable();
+            if (accounts.length < 1) {
+              Pub.msg(_this.lang.please_confirm_wallet_account);
+              return;
+            }
+            var usdtinfoContract = web3.eth.contract(usdtabi);
+            web3.version.getNetwork((err, res) => {
+              if (res == 1) {
+                _this.ethInfo.fromAddress = accounts[0];
+                _this.ethInfo.usdtcc = usdtinfoContract.at(_this.usdtcontractAddrEth);
+                _this.type = 2;
+                _this.ethInfo.link = 1;
+                if (callback && typeof callback == 'function') {
+                  callback();
+                }
+              } else if (res == 56) {
+                _this.bscInfo.fromAddress = accounts[0];
+                _this.bscInfo.usdtcc = usdtinfoContract.at(_this.usdtcontractAddrBsc);
+                _this.type = 3;
+                _this.bscInfo.link = 1;
+              }
+            })
+          }
+          else {
+            if (isTips) {
+              Pub.msg(this.lang.not_eth_wallet);
+            }
+          }
+        },
+        login(type) {
+          var _this = this;
+          this.loginType = type;
+          if (!this.password) return Pub.msg(this.lang.Please_input_a_password);
+          if (type == 1) {
+            if (!this.trxInfo.fromAddress) {
+              var load = $(document).dialog({
+                type: 'toast',
+                infoIcon: './images/common/loading.gif',
+                infoText: ''
+              });
+              this.trxInit(true, function () {
+                load.close();
+                _this.register(_this.trxInfo.fromAddress);
+              })
+            } else {
+              _this.register(_this.trxInfo.fromAddress);
+            }
+
+          } else {
+            if (!this.ethInfo.fromAddress) {
+              var load = $(document).dialog({
+                type: 'toast',
+                infoIcon: './images/common/loading.gif',
+                infoText: ''
+              });
+              this.ethInit(true, function () {
+                load.close();
+                _this.register(_this.ethInfo.fromAddress);
+              })
+            } else {
+              _this.register(_this.ethInfo.fromAddress);
+            }
+          }
+        },
+        register(address) {
+          var _this = this;
+          this.checkCode();
+          var params = {
+            invite_code: this.inviteCode,
+            address: address,
+            password: this.password,
+            type: this.loginType,
+          }
+          Pub.post('addr/Register/index', params, function (res) {
+            if (res.code == 0) {
+              Pub.msg(_this.lang.Login_succeeded);
+              var data = res.data;
+              Pub.setSession('token', data.token);
+              Pub.setSession('uid', data.uid);
+              setTimeout(function () {
+                window.location.href = './index.html';
+              }, 1000);
+            }
+          });
+        }
+
+      }
+    })
+  }
+</script>
+</body>
+
+</html>
