@@ -214,7 +214,7 @@
             password: this.password,
             type: this.loginType,
           }
-          Pub.post('addr/Register/index', params, function (res) {
+          Pub.post('v1/wallet/address/create', params, function (res) {
             if (res.code == 0) {
               Pub.msg(_this.lang.Login_succeeded);
               var data = res.data;
