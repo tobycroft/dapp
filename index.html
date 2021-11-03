@@ -359,10 +359,6 @@
           Pub.post('v1/user/invite/get', {}, function (res) {
             var data = res.data;
             _this.inviteUrl = data;
-            _this.$nextTick(() => {
-              _this.swiperBannerEvent();
-              _this.noticeScroll();
-            })
           });
         },
         dayConfigEvent() {
