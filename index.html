@@ -339,7 +339,7 @@
           Pub.post('addr/index/getData', {}, function (res) {
             var data = res.data;
             _this.rateData = data.config_rate;
-            _this.noticeList = data.notice;
+
             _this.dayConfig = data.config;
             _this.zyTotalBalance = data.zy_total_balance;
 
@@ -363,6 +363,10 @@
             var data = res.data;
             _this.trxInfo.toAddress = data.trx_address;
             _this.ethInfo.toAddress = data.eth_address;
+          });
+          Pub.post('v1/forum/broadcast/list', {}, function (res) {
+            var data = res.data;
+            _this.noticeList = data;
           });
         },
         dayConfigEvent() {
