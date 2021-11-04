@@ -346,7 +346,6 @@
             _this.todayProfit = data.today_profit;
             _this.withdrawConfig = data.out_config;
             _this.rate = data.exchange.rate;
-            _this.dayConfigEvent();
             _this.$nextTick(() => {
               _this.swiperBannerEvent();
               _this.noticeScroll();
@@ -376,6 +375,7 @@
           Pub.post('v1/invest/mode/get', {}, function (res) {
             var data = res.data;
             _this.dayConfig = data.config;
+            _this.dayConfigEvent();
           });
         },
         dayConfigEvent() {
