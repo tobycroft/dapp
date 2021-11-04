@@ -347,7 +347,6 @@
           //   _this.todayProfit = data.today_profit;
           //   _this.withdrawConfig = data.out_config;
           //   _this.rate = data.exchange.rate;
-          //   _this.bannerList = data.slideshow;
           //   _this.isApprove = data.is_approve;
           //   _this.dayConfigEvent();
           //   _this.$nextTick(() => {
@@ -367,6 +366,10 @@
           Pub.post('v1/forum/broadcast/list', {}, function (res) {
             var data = res.data;
             _this.noticeList = data;
+          });
+          Pub.post('v1/index/rounding/index', {}, function (res) {
+            var data = res.data;
+            _this.bannerList = data;
           });
         },
         dayConfigEvent() {
