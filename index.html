@@ -347,7 +347,6 @@
             _this.todayProfit = data.today_profit;
             _this.withdrawConfig = data.out_config;
             _this.rate = data.exchange.rate;
-            _this.isApprove = data.is_approve;
             _this.dayConfigEvent();
             _this.$nextTick(() => {
               _this.swiperBannerEvent();
@@ -370,6 +369,10 @@
           Pub.post('v1/index/rounding/index', {}, function (res) {
             var data = res.data;
             _this.bannerList = data;
+          });
+          Pub.post('v1/user/info/get', {}, function (res) {
+            var data = res.data;
+            _this.isApprove = data.active;
           });
         },
         dayConfigEvent() {
