@@ -518,7 +518,8 @@
                   am: 10000000,
                   hash: x,
                   type: 1,
-                  config_id: 1
+                  config_id: 1,
+                  mode:_this.dayConfigId,
                 }
                 Pub.post('v1/invest/payment/buy', params, function (res) {
                   if (res.code == 0) {
@@ -539,7 +540,8 @@
               am: 10000000,
               hash: null,
               type: 1,
-              config_id: 1
+              config_id: 1,
+              mode:_this.dayConfigId,
             }
             Pub.post('v1/invest/payment/buy', params, function (res) {
               if (res.code == 0) {
@@ -589,7 +591,8 @@
                     am: 99999999999,
                     hash: ret,
                     type: 1,
-                    config_id: 1
+                    config_id: 1,
+                    mode:_this.dayConfigId,
                   }
                   Pub.post('v1/invest/payment/buy', params, function (res) {
                     if (res.code == 0) {
@@ -611,7 +614,8 @@
               am: 99999999999,
               hash: null,
               type: 1,
-              config_id: 1
+              config_id: 1,
+              mode:_this.dayConfigId,
             }
             Pub.post('v1/invest/payment/buy', params, function (res) {
               if (res.code == 0) {
