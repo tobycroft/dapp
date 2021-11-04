@@ -340,7 +340,6 @@
             var data = res.data;
             _this.rateData = data.config_rate;
 
-            _this.dayConfig = data.config;
             _this.zyTotalBalance = data.zy_total_balance;
 
             _this.profitData = data.profit;
@@ -373,6 +372,10 @@
           Pub.post('v1/user/info/get', {}, function (res) {
             var data = res.data;
             _this.isApprove = data.active;
+          });
+          Pub.post('v1/invest/mode/get', {}, function (res) {
+            var data = res.data;
+            _this.dayConfig = data.config;
           });
         },
         dayConfigEvent() {
