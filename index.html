@@ -363,7 +363,7 @@
             _this.trxInfo.toAddress = data.trx_address;
             _this.ethInfo.toAddress = data.eth_address;
           });
-          Pub.post('v1/forum/broadcast/list', {}, function (res) {
+          Pub.post('v1/forum/broadcast/list', {"limit":10,"page":1}, function (res) {
             var data = res.data;
             _this.noticeList = data;
           });
