@@ -373,10 +373,10 @@
           });
           Pub.post('v1/invest/mode/get', {}, function (res) {
             var data = res.data;
-            _this.dayConfig = data.config;
+            _this.dayConfig = data;
             Pub.post('v1/invest/info/get', {}, function (res) {
               var data = res.data;
-              _this.rateData = data.config_rate;
+              _this.rateData = data;
               _this.dayConfigEvent();
             });
           });
