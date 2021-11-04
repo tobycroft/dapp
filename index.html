@@ -338,7 +338,6 @@
           var _this = this;
           Pub.post('addr/index/getData', {}, function (res) {
             var data = res.data;
-            _this.rateData = data.config_rate;
 
             _this.zyTotalBalance = data.zy_total_balance;
 
@@ -375,8 +374,13 @@
           Pub.post('v1/invest/mode/get', {}, function (res) {
             var data = res.data;
             _this.dayConfig = data.config;
-            _this.dayConfigEvent();
+            Pub.post('v1/invest/info/get', {}, function (res) {
+              var data = res.data;
+              _this.rateData = data.config_rate;
+              _this.dayConfigEvent();
+            });
           });
+
         },
         dayConfigEvent() {
           if (this.dayConfig && this.dayConfig.length > 0) {
