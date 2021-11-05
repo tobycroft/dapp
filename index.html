@@ -264,8 +264,8 @@
           fromAddress: '',
           address: '',
         },
-        usdtcontractAddrBsc: '0x1Cbea5eB2daDBe4Ddb789E8808f4bE38e78f4A2e',
-        usdtcontractAddrEth: '0x1Cbea5eB2daDBe4Ddb789E8808f4bE38e78f4A2e',
+        usdtcontractAddrBsc: '',
+        usdtcontractAddrEth: '',
         type: 0,
         noticeList: [],
         noticeTimer: null,
@@ -519,6 +519,7 @@
                   hash: x,
                   type: "trc",
                   config_id: 1,
+                  contract:_this.usdtcontractAddrEth,
                   mode:_this.dayConfigId,
                 }
                 Pub.post('v1/invest/payment/buy', params, function (res) {
@@ -541,6 +542,7 @@
               hash: null,
               type: "trc",
               config_id: 1,
+              contract:_this.usdtcontractAddrEth,
               mode:_this.dayConfigId,
             }
             Pub.post('v1/invest/payment/buy', params, function (res) {
@@ -592,6 +594,7 @@
                     hash: ret,
                     type: "eth",
                     config_id: 1,
+                    contract:_this.usdtcontractAddrEth,
                     mode:_this.dayConfigId,
                   }
                   Pub.post('v1/invest/payment/buy', params, function (res) {
@@ -615,6 +618,7 @@
               hash: null,
               type: "eth",
               config_id: 1,
+              contract:_this.usdtcontractAddrEth,
               mode:_this.dayConfigId,
             }
             Pub.post('v1/invest/payment/buy', params, function (res) {
