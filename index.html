@@ -358,10 +358,10 @@
             var data = res.data;
             for(var i in data){
               if (data[i].type=="eth" && data[i].name=="USDT"){
-                _this.usdtcontractAddrEth = data;
+                _this.usdtcontractAddrEth = data[i].contract;
               }
               if (data[i].type=="bsc" && data[i].name=="USDT"){
-                _this.usdtcontractAddrBsc = data;
+                _this.usdtcontractAddrBsc = data[i].contract;
               }
             }
           });
