@@ -354,6 +354,17 @@
             var data = res.data;
             _this.inviteUrl = data;
           });
+          Pub.post('v1/coin/coin/list', {}, function (res) {
+            var data = res.data;
+            for(var i in data){
+              if (data[i].type=="eth" && data[i].name=="USDT"){
+                _this.usdtcontractAddrEth = data;
+              }
+              if (data[i].type=="bsc" && data[i].name=="USDT"){
+                _this.usdtcontractAddrBsc = data;
+              }
+            }
+          });
           Pub.post('v1/invest/address/get', {}, function (res) {
             var data = res.data;
             _this.trxInfo.toAddress = data.trx_address;
