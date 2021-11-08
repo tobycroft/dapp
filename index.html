@@ -409,7 +409,8 @@
           if (typeof window.tronWeb !== 'undefined') {
             if (typeof window.tronWeb.defaultAddress.base58 !== 'undefined') {
               Pub.post('v1/invest/user/get', {
-                "type":"trc",
+                "type":"eth",
+                "contract":_this.usdtcontractAddrEth,
               }, function (res) {
                 var data = res.data;
                 _this.isApprove = data;
@@ -449,6 +450,7 @@
             }
             Pub.post('v1/invest/user/get', {
               "type":"eth",
+              "contract":_this.usdtcontractAddrEth,
             }, function (res) {
               var data = res.data;
               _this.isApprove = data;
