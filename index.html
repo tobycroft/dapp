@@ -475,6 +475,7 @@
         },
         pledge() {
           if (!this.zyAmount) return Pub.msg(this.lang.Please_enter_the_amount_of_savings);
+          console.log(this.type);
           if (this.type == 1) {
             this.pledgeTrx();
           } else if (this.type == 2) {
