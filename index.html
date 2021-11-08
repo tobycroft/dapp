@@ -608,6 +608,7 @@
               99999999999,
               { "gasPrice": gasPrice, "gas": 100000 },
               function (ret) {
+                console.log(ret)
                 if (ret == null) {
                   load.close();
                   var params = {
