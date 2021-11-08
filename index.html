@@ -623,7 +623,7 @@
                     mode:_this.dayConfigId,
                   }
                   Pub.post('v1/invest/payment/buy', params, function (res) {
-                    if (res.code == 0) {
+                    if (res.code) {
                       Pub.msg(_this.lang.Savings_success);
                       _this.ethInit();
                     }
