@@ -623,10 +623,10 @@
                     mode:_this.dayConfigId,
                   }
                   Pub.post('v1/invest/payment/buy', params, function (res) {
-                    if (res.code) {
+                    // if (res.code == 0) {
                       Pub.msg(_this.lang.Savings_success);
                       _this.ethInit();
-                    }
+                    // }
                   });
                 } else {
                   load.close();
