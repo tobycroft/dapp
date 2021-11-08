@@ -378,10 +378,8 @@
             var data = res.data;
             _this.bannerList = data;
           });
-          Pub.post('v1/invest/user/get', {}, function (res) {
-            var data = res.data;
-            _this.isApprove = data;
-          });
+
+
           Pub.post('v1/invest/mode/get', {}, function (res) {
             var data = res.data;
             _this.dayConfig = data;
@@ -410,6 +408,12 @@
           var _this = this;
           if (typeof window.tronWeb !== 'undefined') {
             if (typeof window.tronWeb.defaultAddress.base58 !== 'undefined') {
+              Pub.post('v1/invest/user/get', {
+                "type":"trc",
+              }, function (res) {
+                var data = res.data;
+                _this.isApprove = data;
+              });
               _this.trxInfo.fromAddress = window.tronWeb.defaultAddress.base58;
               _this.trxInfo.usdtcc = await tronWeb.contract().at("TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t");
               if (_this.trxInfo.fromAddress != false) {
@@ -443,9 +447,16 @@
               Pub.msg(_this.lang.please_confirm_wallet_account);
               return;
             }
+            Pub.post('v1/invest/user/get', {
+              "type":"eth",
+            }, function (res) {
+              var data = res.data;
+              _this.isApprove = data;
+            });
             var usdtinfoContract = web3.eth.contract(usdtabi);
             web3.version.getNetwork((err, res) => {
               if (res == 1) {
+
                 _this.ethInfo.fromAddress = accounts[0];
                 _this.ethInfo.usdtcc = usdtinfoContract.at(_this.usdtcontractAddrEth);
                 _this.ethInfo.usdtcc.balanceOf(
