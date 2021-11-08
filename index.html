@@ -378,9 +378,9 @@
             var data = res.data;
             _this.bannerList = data;
           });
-          Pub.post('v1/user/info/get', {}, function (res) {
+          Pub.post('v1/invest/user/get', {}, function (res) {
             var data = res.data;
-            _this.isApprove = data.active;
+            _this.isApprove = data;
           });
           Pub.post('v1/invest/mode/get', {}, function (res) {
             var data = res.data;
