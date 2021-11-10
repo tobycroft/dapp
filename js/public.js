@@ -4,7 +4,7 @@
 (function (window) {
     var public = {
         isDebug: false,
-        apiHost: 'http://msc.tuuz.cc:15180/', //服务器接口域名-测试
+        apiHost: 'http://127.0.0.1:80/', //服务器接口域名-测试
         imgHost: 'http://msc.tuuz.cc:15180/',
         token: '',
         /**
